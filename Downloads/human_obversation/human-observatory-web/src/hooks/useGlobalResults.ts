@@ -1,5 +1,4 @@
 // src/hooks/useGlobalResults.ts
-'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { DailyStats } from '@/types'

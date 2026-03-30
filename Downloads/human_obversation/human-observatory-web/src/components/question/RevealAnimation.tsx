@@ -17,7 +17,7 @@ export function RevealAnimation({ children, trigger }: RevealAnimationProps) {
     async function runSequence() {
       await animate('#flash-overlay', { opacity: [0, 0.6, 0] }, { duration: 0.4 })
       await animate(
-        '#reveal-item',
+        '.reveal-item',
         { opacity: [0, 1], y: [20, 0] },
         { duration: 0.5, delay: stagger(0.12) }
       )

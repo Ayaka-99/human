@@ -66,17 +66,17 @@ export function ResultsClient({
           }}
         >
           {/* 地球圖示 */}
-          <div id="reveal-item" style={{ textAlign: 'center', marginBottom: 4, opacity: 0 }}>
+          <div className="reveal-item" style={{ textAlign: 'center', marginBottom: 4, opacity: 0 }}>
             <div style={{ fontSize: 48 }}>🌍</div>
           </div>
 
           {/* CounterBadge */}
-          <div id="reveal-item" style={{ opacity: 0 }}>
+          <div className="reveal-item" style={{ opacity: 0 }}>
             <CounterBadge count={sameCount} answerKey={userAnswer} />
           </div>
 
           {/* 你選了 + 總人數 */}
-          <div id="reveal-item" style={{ textAlign: 'center', marginBottom: 24, opacity: 0 }}>
+          <div className="reveal-item" style={{ textAlign: 'center', marginBottom: 24, opacity: 0 }}>
             <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
               共{' '}
               <span style={{ color: 'var(--text)', fontWeight: 600 }}>
@@ -97,7 +97,7 @@ export function ResultsClient({
           {/* 題目文字（若有） */}
           {question && (
             <div
-              id="reveal-item"
+              className="reveal-item"
               style={{
                 opacity: 0,
                 fontSize: 15,
@@ -113,7 +113,7 @@ export function ResultsClient({
           )}
 
           {/* GlobalPieChart */}
-          <div id="reveal-item" style={{ opacity: 0 }}>
+          <div className="reveal-item" style={{ opacity: 0 }}>
             <GlobalPieChart
               distribution={distribution}
               total={total}
@@ -123,7 +123,7 @@ export function ResultsClient({
           </div>
 
           {/* 各選項長條 */}
-          <div id="reveal-item" style={{ display: 'flex', flexDirection: 'column', gap: 14, opacity: 0 }}>
+          <div className="reveal-item" style={{ display: 'flex', flexDirection: 'column', gap: 14, opacity: 0 }}>
             {options.map((opt) => {
               const count = distribution[opt.key] ?? 0
               const pct = total > 0 ? Math.round((count / total) * 100) : 0
@@ -173,7 +173,6 @@ export function ResultsClient({
                         width: `${pct}%`,
                         borderRadius: 3,
                         background: isUserAnswer ? color : `${color}60`,
-                        transition: 'width 0.8s ease',
                       }}
                     />
                   </div>
