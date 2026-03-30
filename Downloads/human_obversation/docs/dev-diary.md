@@ -108,3 +108,38 @@ npm run dev
 ```
 
 ---
+
+## 2026-03-30 — Day 4：動畫 + 圓餅圖 + Realtime
+
+**目標：** 結果頁加入揭曉動畫、Recharts 圓餅圖、CounterBadge 數字滾動，Supabase Realtime 即時更新
+
+### 完成項目
+
+| # | 內容 | 檔案 |
+|---|------|------|
+| 1 | 安裝 framer-motion、recharts | `package.json` |
+| 2 | useGlobalResults hook（Supabase Realtime 訂閱） | `src/hooks/useGlobalResults.ts`（新建） |
+| 3 | CounterBadge（requestAnimationFrame 數字滾動） | `src/components/charts/CounterBadge.tsx`（新建） |
+| 4 | GlobalPieChart（Recharts，用戶選項突出，SVG 用 hex，CSS 用 var） | `src/components/charts/GlobalPieChart.tsx`（新建） |
+| 5 | RevealAnimation（Framer Motion 揭曉序列） | `src/components/question/RevealAnimation.tsx`（新建） |
+| 6 | ResultsClient（'use client' 動畫 + Realtime） | `src/components/results/ResultsClient.tsx`（新建） |
+| 7 | 結果頁重構（Server Component 僅 SSR fetch + Promise.all） | `src/app/results/[questionId]/page.tsx` |
+
+### 注意事項（下次接手要知道）
+
+- Supabase Realtime 需在 Dashboard 啟用 `daily_stats` 表的 Replication（Realtime → Tables → Enable Realtime）
+- RevealAnimation 用 `className="reveal-item"` 做 stagger 選擇器（不用 id，避免重複）
+- GlobalPieChart SVG Cell fill 用 hex（`ANSWER_HEX`），非 SVG 用 CSS var（`ANSWER_COLOR`）— Recharts SVG 無法解析 CSS 變數
+- 結果頁 Server Component 用 `Promise.all` 並行 fetch 兩個 query，降低延遲
+- hooks/ 目錄不加 `'use client'`，由使用該 hook 的 Client Component 提供 client boundary
+
+### 驗證方式
+
+```bash
+cd c:/Users/ayaka/Downloads/human_obversation/human-observatory-web
+npm run dev
+# → localhost:3000 選答案送出
+# → 結果頁：teal flash → 地球 → 數字從 0 滾動到正確值 → 圓餅圖動畫 → 長條圖逐一淡入
+# → 另開分頁再送一票，原頁面數字應即時更新（Realtime）
+# → 切換明暗主題，圓餅圖顏色保持正確（CSS vars）
+```
