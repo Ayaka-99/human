@@ -3,7 +3,12 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
-  const body = await request.json() as { question_id: string; value: string }
+  let body: { question_id: string; value: string }
+  try {
+    body = await request.json() as { question_id: string; value: string }
+  } catch {
+    return NextResponse.json({ error: 'invalid JSON body' }, { status: 400 })
+  }
   const { question_id, value } = body
 
   if (!question_id || !value) {
