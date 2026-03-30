@@ -103,12 +103,14 @@ export function WorldHeatmap({ regionBreakdown, userAnswer, options }: WorldHeat
   const [activeOption, setActiveOption] = useState(userAnswer)
   const [hoveredCountry, setHoveredCountry] = useState<{ name: string; value: number } | null>(null)
   const [worldData, setWorldData] = useState<Topology | null>(null)
+  const [fetchError, setFetchError] = useState<string | null>(null)
 
   // topology 只 fetch 一次
   useEffect(() => {
     fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
       .then((r) => r.json())
       .then(setWorldData)
+      .catch(() => setFetchError('地圖資料載入失敗'))
   }, [])
 
   // 每次 activeOption 或資料變更時重繪
@@ -151,6 +153,13 @@ export function WorldHeatmap({ regionBreakdown, userAnswer, options }: WorldHeat
           )
         })}
       </div>
+
+      {/* 錯誤訊息 */}
+      {fetchError && (
+        <div style={{ padding: 16, color: 'var(--text-muted)', fontSize: 13, textAlign: 'center' }}>
+          {fetchError}
+        </div>
+      )}
 
       {/* D3 SVG 地圖 */}
       <svg ref={svgRef} style={{ width: '100%', display: 'block' }} />
