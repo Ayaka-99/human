@@ -9,7 +9,6 @@ interface QuestionCardProps {
   question: Question
 }
 
-// 答案對應的 CSS variable 顏色
 const ANSWER_COLOR: Record<string, string> = {
   A: 'var(--answer-a)',
   B: 'var(--answer-b)',
@@ -22,12 +21,25 @@ export function QuestionCard({ question }: QuestionCardProps) {
   const router = useRouter()
   const [selected, setSelected] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // 提交選擇，導向結果頁
   async function handleSubmit() {
     if (!selected || submitting) return
     setSubmitting(true)
-    // Day 3 會替換為真實 API 呼叫
+    setError(null)
+
+    const res = await fetch('/api/submit-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question_id: question.id, value: selected }),
+    })
+
+    if (!res.ok) {
+      setError('送出失敗，請重試')
+      setSubmitting(false)
+      return
+    }
+
     router.push(`/results/${question.id}?answer=${selected}`)
   }
 
@@ -90,7 +102,6 @@ export function QuestionCard({ question }: QuestionCardProps) {
                 transition: 'border-color 0.15s, background 0.15s',
               }}
             >
-              {/* 選項字母標籤 */}
               <span
                 style={{
                   width: 28,
@@ -109,7 +120,6 @@ export function QuestionCard({ question }: QuestionCardProps) {
               >
                 {opt.key}
               </span>
-              {/* 選項文字 */}
               <span
                 style={{
                   fontSize: 15,
@@ -123,6 +133,13 @@ export function QuestionCard({ question }: QuestionCardProps) {
           )
         })}
       </div>
+
+      {/* 錯誤訊息 */}
+      {error && (
+        <p style={{ marginTop: 12, color: 'var(--answer-d)', fontSize: 13 }}>
+          {error}
+        </p>
+      )}
 
       {/* 提交按鈕 */}
       <button
