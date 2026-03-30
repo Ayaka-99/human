@@ -143,3 +143,53 @@ npm run dev
 # → 另開分頁再送一票，原頁面數字應即時更新（Realtime）
 # → 切換明暗主題，圓餅圖顏色保持正確（CSS vars）
 ```
+
+---
+
+## 2026-03-30 — Day 5：WorldHeatmap + TimeHeatmap + PremiumGate
+
+**目標：** 結果頁加入 D3 世界地圖熱力圖、時段熱力圖，並用 PremiumGate 元件鎖定進階功能
+
+**實作計畫：** `docs/superpowers/plans/2026-03-30-day5-worldheatmap-timeheatmap-premiumgate.md`
+
+### 完成項目
+
+| # | 內容 | 檔案 |
+|---|------|------|
+| 1 | 安裝 d3、topojson-client | `human-observatory-web/package.json` |
+| 2 | DailyStats 新增 region_breakdown、time_breakdown | `src/types/index.ts` |
+| 3 | ALPHA2_TO_NUMERIC + NUMERIC_TO_NAME 對照表 | `src/lib/countryCode.ts`（新建） |
+| 4 | PremiumGate 元件（模糊鎖定層） | `src/components/ui/PremiumGate.tsx`（新建） |
+| 5 | WorldHeatmap（D3 SVG，選項切換，hover tooltip，fetch 錯誤處理） | `src/components/charts/WorldHeatmap.tsx`（新建） |
+| 6 | TimeHeatmap（CSS Grid，24h × 5 選項，React.Fragment key 修正） | `src/components/charts/TimeHeatmap.tsx`（新建） |
+| 7 | submit-answer API 加入 region 偵測 + time_breakdown 聚合 + JSON 錯誤處理 | `src/app/api/submit-answer/route.ts` |
+| 8 | ResultsClient 整合 WorldHeatmap + TimeHeatmap + PremiumGate | `src/components/results/ResultsClient.tsx` |
+
+### 注意事項（下次接手要知道）
+
+- PremiumGate 的 `locked` prop 預設 `true`（MVP 全鎖）；未來接 auth 時改為判斷 `user.isPremium`
+- WorldHeatmap topology 只從 `cdn.jsdelivr.net/npm/world-atlas@2` 取得（CLAUDE.md rule #11）
+- `ALPHA2_TO_NUMERIC` 目前涵蓋約 55 個國家；新增國家在 `src/lib/countryCode.ts` 補充
+- submit-answer API 在本地開發時 `x-vercel-ip-country` 不存在，region 存 `UNKNOWN`，region_breakdown 會跳過這些記錄（地圖上不會顯示本地測試的票數）
+- `daily_stats` 的 `region_breakdown` 和 `time_breakdown` 是 JSONB 欄位，需確認 Supabase 已建立這兩個欄位（若未建立，upsert 會靜默忽略）
+- TimeHeatmap 在 React Fragment 使用 `<React.Fragment key={opt.key}>` 而非 `<>`，避免 reconciliation 問題
+
+### Supabase schema 補充
+
+若 `daily_stats` 表尚未有 `region_breakdown` 和 `time_breakdown` 欄位，執行：
+```sql
+ALTER TABLE daily_stats
+  ADD COLUMN IF NOT EXISTS region_breakdown JSONB DEFAULT '{}',
+  ADD COLUMN IF NOT EXISTS time_breakdown   JSONB DEFAULT '{}';
+```
+
+### 驗證方式
+
+```bash
+cd c:/Users/ayaka/Downloads/human_obversation/human-observatory-web
+npm run dev
+# → localhost:3000 選答案送出
+# → 結果頁捲到底：WorldHeatmap 被模糊 + 🔒「世界地圖分佈」
+# → TimeHeatmap 被模糊 + 🔒「時段熱力圖」
+# → 明暗切換後，PremiumGate 背景隨主題變色
+```
