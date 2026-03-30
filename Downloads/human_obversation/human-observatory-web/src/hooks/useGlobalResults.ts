@@ -15,7 +15,7 @@ export function useGlobalResults(questionId: string, initialStats: DailyStats | 
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
           table: 'daily_stats',
           filter: `question_id=eq.${questionId}`,

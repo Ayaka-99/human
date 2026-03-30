@@ -1,5 +1,5 @@
 'use client'
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { PieChart, Pie, Cell, Sector, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface GlobalPieChartProps {
   distribution: Record<string, number>  // { A: 42, B: 18, ... }
@@ -73,7 +73,32 @@ export function GlobalPieChart({ distribution, total, userAnswer, options }: Glo
     <div style={{ width: '100%', height: 260 }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
+          {/* activeIndex / activeShape 是 Recharts runtime API，但 v3 型別定義未完全暴露，用 cast 繞過 */}
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           <Pie
+            {...({
+              activeIndex: data.findIndex((d) => d.key === userAnswer),
+              activeShape: (props: unknown) => {
+                const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props as {
+                  cx: number; cy: number; innerRadius: number; outerRadius: number
+                  startAngle: number; endAngle: number; fill: string
+                }
+                // 使用 Recharts Sector 渲染展開的選中區塊
+                return (
+                  <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius + 8}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                    stroke="#ffffff"
+                    strokeWidth={2}
+                  />
+                )
+              },
+            } as Record<string, unknown>)}
             data={data}
             cx="50%"
             cy="50%"
@@ -84,19 +109,13 @@ export function GlobalPieChart({ distribution, total, userAnswer, options }: Glo
             isAnimationActive
             animationDuration={800}
           >
-            {data.map((entry) => {
-              const isUser = entry.key === userAnswer
-              return (
-                <Cell
-                  key={entry.key}
-                  fill={ANSWER_HEX[entry.key] ?? '#6B8599'}
-                  opacity={isUser ? 1 : 0.5}
-                  stroke={isUser ? '#ffffff' : 'none'}
-                  strokeWidth={isUser ? 2 : 0}
-                  {...(isUser ? { outerRadius: 98 } : {})}
-                />
-              )
-            })}
+            {data.map((entry) => (
+              <Cell
+                key={entry.key}
+                fill={ANSWER_HEX[entry.key] ?? '#6B8599'}
+                opacity={entry.key === userAnswer ? 1 : 0.5}
+              />
+            ))}
           </Pie>
           <Tooltip content={<CustomTooltip total={total} />} />
         </PieChart>

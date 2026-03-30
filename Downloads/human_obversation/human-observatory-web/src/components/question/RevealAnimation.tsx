@@ -14,8 +14,11 @@ export function RevealAnimation({ children, trigger }: RevealAnimationProps) {
   useEffect(() => {
     if (!trigger) return
 
+    let isMounted = true
+
     async function runSequence() {
       await animate('.flash-overlay', { opacity: [0, 0.6, 0] }, { duration: 0.4 })
+      if (!isMounted) return
       await animate(
         '.reveal-item',
         { opacity: [0, 1], y: [20, 0] },
@@ -24,6 +27,10 @@ export function RevealAnimation({ children, trigger }: RevealAnimationProps) {
     }
 
     runSequence()
+
+    return () => {
+      isMounted = false
+    }
   }, [trigger, animate])
 
   return (
