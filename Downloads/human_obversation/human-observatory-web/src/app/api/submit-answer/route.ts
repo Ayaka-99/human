@@ -10,15 +10,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing fields' }, { status: 400 })
   }
 
-  // 驗證 value 只能是合法選項
   const VALID_VALUES = ['A', 'B', 'C', 'D', 'E']
   if (!VALID_VALUES.includes(value)) {
     return NextResponse.json({ error: 'invalid value' }, { status: 400 })
   }
 
+  // 讀取 Vercel 地區 header（本地開發時為 null）
+  const countryCode = request.headers.get('x-vercel-ip-country') ?? 'UNKNOWN'
+
   const supabase = createServerClient()
 
-  // 驗證 question_id 存在
   const { error: questionError } = await supabase
     .from('questions')
     .select('id')
@@ -29,19 +30,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'invalid question_id' }, { status: 400 })
   }
 
-  // 1. 插入答案（region 留 UNKNOWN，Vercel 部署後自動偵測 IP 國家）
+  // 插入答案，包含 region
   const { error: insertError } = await supabase
     .from('answers')
-    .insert({ question_id, value, region: 'UNKNOWN' })
+    .insert({ question_id, value, region: countryCode })
 
   if (insertError) {
     return NextResponse.json({ error: insertError.message }, { status: 500 })
   }
 
-  // 2. 重新統計各選項票數
+  // 重新統計：distribution + region_breakdown + time_breakdown
   const { data: allAnswers, error: countError } = await supabase
     .from('answers')
-    .select('value')
+    .select('value, region, created_at')
     .eq('question_id', question_id)
 
   if (countError) {
@@ -49,16 +50,43 @@ export async function POST(request: Request) {
   }
 
   const distribution: Record<string, number> = {}
+  const regionBreakdown: Record<string, Record<string, number>> = {}
+  const timeBreakdown: Record<string, Record<string, number>> = {}
+
   for (const row of allAnswers ?? []) {
+    // distribution
     distribution[row.value] = (distribution[row.value] ?? 0) + 1
+
+    // region_breakdown（跳過 UNKNOWN）
+    if (row.region && row.region !== 'UNKNOWN') {
+      regionBreakdown[row.region] ??= {}
+      regionBreakdown[row.region][row.value] = (regionBreakdown[row.region][row.value] ?? 0) + 1
+    }
+
+    // time_breakdown（UTC+8 小時）
+    if (row.created_at) {
+      const utc8Hour = new Date(
+        new Date(row.created_at).getTime() + 8 * 60 * 60 * 1000
+      ).getUTCHours()
+      const hourKey = String(utc8Hour).padStart(2, '0')
+      timeBreakdown[hourKey] ??= {}
+      timeBreakdown[hourKey][row.value] = (timeBreakdown[hourKey][row.value] ?? 0) + 1
+    }
   }
+
   const total_count = allAnswers?.length ?? 0
 
-  // 3. upsert daily_stats
   const { data: stats, error: upsertError } = await supabase
     .from('daily_stats')
     .upsert(
-      { question_id, total_count, distribution, updated_at: new Date().toISOString() },
+      {
+        question_id,
+        total_count,
+        distribution,
+        region_breakdown: regionBreakdown,
+        time_breakdown: timeBreakdown,
+        updated_at: new Date().toISOString(),
+      },
       { onConflict: 'question_id' }
     )
     .select()
