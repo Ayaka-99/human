@@ -8,7 +8,17 @@ interface GlobalPieChartProps {
   options: { key: string; label_zh: string }[]
 }
 
+// CSS vars — for non-SVG elements (tooltips, labels)
 const ANSWER_COLOR: Record<string, string> = {
+  A: 'var(--answer-a)',
+  B: 'var(--answer-b)',
+  C: 'var(--answer-c)',
+  D: 'var(--answer-d)',
+  E: 'var(--answer-e)',
+}
+
+// Hex values — for SVG Cell fills (Recharts can't resolve CSS vars in SVG)
+const ANSWER_HEX: Record<string, string> = {
   A: '#3B82F6',
   B: '#10B981',
   C: '#F59E0B',
@@ -79,7 +89,7 @@ export function GlobalPieChart({ distribution, total, userAnswer, options }: Glo
               return (
                 <Cell
                   key={entry.key}
-                  fill={ANSWER_COLOR[entry.key] ?? '#6B8599'}
+                  fill={ANSWER_HEX[entry.key] ?? '#6B8599'}
                   opacity={isUser ? 1 : 0.5}
                   stroke={isUser ? '#ffffff' : 'none'}
                   strokeWidth={isUser ? 2 : 0}

@@ -15,7 +15,7 @@ export function RevealAnimation({ children, trigger }: RevealAnimationProps) {
     if (!trigger) return
 
     async function runSequence() {
-      await animate('#flash-overlay', { opacity: [0, 0.6, 0] }, { duration: 0.4 })
+      await animate('.flash-overlay', { opacity: [0, 0.6, 0] }, { duration: 0.4 })
       await animate(
         '.reveal-item',
         { opacity: [0, 1], y: [20, 0] },
@@ -30,7 +30,7 @@ export function RevealAnimation({ children, trigger }: RevealAnimationProps) {
     <div ref={scope} style={{ position: 'relative' }}>
       {/* flash overlay */}
       <div
-        id="flash-overlay"
+        className="flash-overlay"
         style={{
           position: 'fixed',
           inset: 0,
