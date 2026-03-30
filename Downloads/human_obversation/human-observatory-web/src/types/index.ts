@@ -19,5 +19,7 @@ export interface DailyStats {
   question_id: string
   total_count: number
   distribution: Record<string, number>  // { A: 42, B: 18, ... }
+  region_breakdown?: Record<string, Record<string, number>>  // { TW: { A: 72, B: 18 }, JP: { A: 58 } }
+  time_breakdown?: Record<string, Record<string, number>>    // { "08": { A: 12, B: 5 }, "09": { A: 8 } }
   updated_at: string
 }
