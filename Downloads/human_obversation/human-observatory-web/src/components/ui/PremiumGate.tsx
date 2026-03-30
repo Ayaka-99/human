@@ -1,5 +1,6 @@
 // src/components/ui/PremiumGate.tsx
 'use client'
+import type React from 'react'
 
 interface PremiumGateProps {
   children: React.ReactNode
