@@ -13,3 +13,11 @@ export interface Question {
   type: 'single'        // 目前只做單選
   options: QuestionOption[]
 }
+
+// 每日統計（對應 Supabase daily_stats 表）
+export interface DailyStats {
+  question_id: string
+  total_count: number
+  distribution: Record<string, number>  // { A: 42, B: 18, ... }
+  updated_at: string
+}
