@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react'
 import { RevealAnimation } from '@/components/question/RevealAnimation'
 import { CounterBadge } from '@/components/charts/CounterBadge'
 import { GlobalPieChart } from '@/components/charts/GlobalPieChart'
+import { WorldHeatmap } from '@/components/charts/WorldHeatmap'
+import { TimeHeatmap } from '@/components/charts/TimeHeatmap'
+import { PremiumGate } from '@/components/ui/PremiumGate'
 import { useGlobalResults } from '@/hooks/useGlobalResults'
 import type { DailyStats, Question } from '@/types'
 
@@ -179,6 +182,27 @@ export function ResultsClient({
                 </div>
               )
             })}
+          </div>
+
+          {/* WorldHeatmap — Premium Gate */}
+          <div className="reveal-item" style={{ opacity: 0, marginTop: 32 }}>
+            <PremiumGate feature="世界地圖分佈">
+              <WorldHeatmap
+                regionBreakdown={stats?.region_breakdown ?? {}}
+                userAnswer={userAnswer}
+                options={options}
+              />
+            </PremiumGate>
+          </div>
+
+          {/* TimeHeatmap — Premium Gate */}
+          <div className="reveal-item" style={{ opacity: 0, marginTop: 24 }}>
+            <PremiumGate feature="時段熱力圖">
+              <TimeHeatmap
+                timeBreakdown={stats?.time_breakdown ?? {}}
+                options={options}
+              />
+            </PremiumGate>
           </div>
         </div>
       </RevealAnimation>
