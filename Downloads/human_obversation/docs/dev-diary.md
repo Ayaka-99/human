@@ -75,3 +75,36 @@ npm run dev
 ```
 
 ---
+
+## 2026-03-30 — Day 3：Supabase 整合 + 回答提交 + 結果頁統計
+
+**目標：** 接上真實資料庫，提交答案寫入 Supabase，結果頁顯示即時統計分佈
+
+### 完成項目
+
+| # | 內容 | 檔案 |
+|---|------|------|
+| 1 | Supabase browser/server client | `src/lib/supabase/client.ts`、`server.ts`（新建） |
+| 2 | 新增 DailyStats 型別 | `src/types/index.ts` |
+| 3 | 首頁改從 Supabase 讀今日題目（含 mock fallback） | `src/app/page.tsx` |
+| 4 | POST /api/submit-answer（寫入 answers + 更新 daily_stats） | `src/app/api/submit-answer/route.ts`（新建） |
+| 5 | QuestionCard 改呼叫真實 API | `src/components/question/QuestionCard.tsx` |
+| 6 | 結果頁顯示各選項百分比長條 | `src/app/results/[questionId]/page.tsx` |
+
+### 注意事項（下次接手要知道）
+
+- Supabase URL + anon key 在 `.env.local`（不進 git）
+- 首頁有 fallback：Supabase 沒有今日題目時自動用 mockData
+- `daily_stats` upsert 用 `onConflict: 'question_id'`，需要 UNIQUE 約束
+- region 目前存 'UNKNOWN'，Day 5 接 WorldHeatmap 時改用 `x-vercel-ip-country` header
+- 結果頁是 Server Component，每次進頁面重新 fetch（無 Realtime，Day 4 加）
+
+### 驗證方式
+
+```bash
+cd C:\Users\ayaka\Downloads\human_obversation\human-observatory-web
+npm run dev
+# → 選答案送出 → 結果頁有統計 → Supabase dashboard 確認 answers 表有資料
+```
+
+---
