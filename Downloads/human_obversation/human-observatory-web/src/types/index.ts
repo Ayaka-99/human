@@ -1,0 +1,15 @@
+// src/types/index.ts
+// 題目選項
+export interface QuestionOption {
+  key: string        // 'A' | 'B' | 'C' | 'D' | 'E'
+  label_zh: string   // 中文選項文字
+}
+
+// 題目
+export interface Question {
+  id: string
+  date: string          // 'YYYY-MM-DD'
+  text_zh: string       // 題目中文文字
+  type: 'single'        // 目前只做單選
+  options: QuestionOption[]
+}
