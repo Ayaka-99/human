@@ -1,6 +1,8 @@
 // src/components/charts/TimeHeatmap.tsx
 'use client'
 
+import React from 'react'
+
 interface TimeHeatmapProps {
   timeBreakdown: Record<string, Record<string, number>>  // { "08": { A: 12, B: 5 }, ... }
   options: { key: string; label_zh: string }[]
@@ -65,7 +67,7 @@ export function TimeHeatmap({ timeBreakdown, options }: TimeHeatmapProps) {
 
           {/* 每個選項一列 */}
           {options.map((opt) => (
-            <>
+            <React.Fragment key={opt.key}>
               <div
                 key={`label-${opt.key}`}
                 style={{
@@ -94,7 +96,7 @@ export function TimeHeatmap({ timeBreakdown, options }: TimeHeatmapProps) {
                   />
                 )
               })}
-            </>
+            </React.Fragment>
           ))}
         </div>
       </div>
