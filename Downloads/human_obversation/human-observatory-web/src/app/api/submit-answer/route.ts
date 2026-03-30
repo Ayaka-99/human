@@ -10,7 +10,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing fields' }, { status: 400 })
   }
 
+  // 驗證 value 只能是合法選項
+  const VALID_VALUES = ['A', 'B', 'C', 'D', 'E']
+  if (!VALID_VALUES.includes(value)) {
+    return NextResponse.json({ error: 'invalid value' }, { status: 400 })
+  }
+
   const supabase = createServerClient()
+
+  // 驗證 question_id 存在
+  const { error: questionError } = await supabase
+    .from('questions')
+    .select('id')
+    .eq('id', question_id)
+    .single()
+
+  if (questionError) {
+    return NextResponse.json({ error: 'invalid question_id' }, { status: 400 })
+  }
 
   // 1. 插入答案（region 留 UNKNOWN，Vercel 部署後自動偵測 IP 國家）
   const { error: insertError } = await supabase
