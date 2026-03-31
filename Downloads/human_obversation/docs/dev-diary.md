@@ -226,3 +226,39 @@ npm run dev
 # → 點紀錄 → 跳到結果頁
 # → 重新整理歷史頁，紀錄仍在
 ```
+
+---
+
+## 2026-03-31 — Day 7：個人頁（統計總覽）
+
+**目標：** `/profile` 頁顯示總答題數（英雄橫幅）+ 最近 12 週答題日曆熱圖，資料全來自 localStorage
+
+**設計文件：** `docs/superpowers/specs/2026-03-31-profile-design.md`
+**實作計畫：** `docs/superpowers/plans/2026-03-31-profile.md`
+**PR：** [Ayaka-99/human#1](https://github.com/Ayaka-99/human/pull/1)
+
+### 完成項目
+
+| # | 內容 | 檔案 |
+|---|------|------|
+| 1 | ActivityCalendar 元件（7×12 CSS Grid，台北時區 UTC anchor 日期計算） | `src/components/charts/ActivityCalendar.tsx`（新建） |
+| 2 | /profile 頁面（英雄橫幅 + ActivityCalendar，SSR skeleton） | `src/app/profile/page.tsx`（新建） |
+| 3 | Timezone bug fix：buildCells 改用 UTC arithmetic 避免非台北時區日期錯位 | `src/components/charts/ActivityCalendar.tsx` |
+
+### 注意事項（下次接手要知道）
+
+- 日曆 date 字串格式：先用 `toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' })` 取今天的台北日期，再 parse 為 UTC midnight，用 `setUTCDate` 往回推，最後 `toISOString().slice(0, 10)` 取出 YYYY-MM-DD
+- 這樣產生的日期字串與 `history.ts` 的 `HistoryEntry.date`（台北時間 YYYY-MM-DD）一致，`answeredDates.has(date)` 才能正確 match
+- Navbar 的「個人頁」連結早已存在，不需修改
+- 未實作：連續答題天數（streak）、選項偏好分佈、登入同步
+
+### 驗證方式
+
+```bash
+cd c:/Users/ayaka/Downloads/human_obversation/human-observatory-web
+npm run dev
+# → localhost:3000/profile
+# → 英雄橫幅：teal 漸層，顯示總答題數
+# → 日曆：12 週格子，有答題日期亮 teal，hover 顯示日期
+# → 明暗主題切換後版面正常
+```
