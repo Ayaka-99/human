@@ -9,11 +9,16 @@ interface Props {
  * 使用 sv-SE locale 取得 YYYY-MM-DD（台北時間）
  */
 function buildCells(answeredDates: Set<string>): { date: string; filled: boolean }[] {
+  // 先取得台北時區的「今天」日期字串
+  const todayTaipei = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' })
+  // 解析為 UTC 午夜，讓後續日期計算與時區無關
+  const base = new Date(todayTaipei + 'T00:00:00Z')
   const cells: { date: string; filled: boolean }[] = []
   for (let i = 83; i >= 0; i--) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    const date = d.toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' })
+    const d = new Date(base)
+    d.setUTCDate(d.getUTCDate() - i)
+    // 使用 ISO 字串取得 YYYY-MM-DD（不依賴時區）
+    const date = d.toISOString().slice(0, 10)
     cells.push({ date, filled: answeredDates.has(date) })
   }
   return cells
