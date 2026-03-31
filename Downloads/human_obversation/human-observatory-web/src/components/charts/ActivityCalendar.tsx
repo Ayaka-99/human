@@ -58,6 +58,7 @@ export function ActivityCalendar({ answeredDates }: Props) {
             key={date}
             title={date}
             style={{
+              height: 12,
               borderRadius: 2,
               background: filled ? '#0d9488' : 'var(--surface-high)',
             }}
