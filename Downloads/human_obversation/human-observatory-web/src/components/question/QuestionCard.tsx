@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Question } from '@/types'
+import { saveHistory } from '@/lib/history'
 
 interface QuestionCardProps {
   question: Question
@@ -40,6 +41,12 @@ export function QuestionCard({ question }: QuestionCardProps) {
       return
     }
 
+    saveHistory({
+      question_id: question.id,
+      date: question.date,
+      text_zh: question.text_zh,
+      userAnswer: selected,
+    })
     router.push(`/results/${question.id}?answer=${selected}`)
   }
 
