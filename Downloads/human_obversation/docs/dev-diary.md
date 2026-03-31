@@ -193,3 +193,36 @@ npm run dev
 # → TimeHeatmap 被模糊 + 🔒「時段熱力圖」
 # → 明暗切換後，PremiumGate 背景隨主題變色
 ```
+
+---
+
+## 2026-03-31 — Day 6：歷史紀錄
+
+**目標：** 用 localStorage 記錄答題歷史，/history 頁顯示清單，點擊跳到結果頁
+
+### 完成項目
+
+| # | 內容 | 檔案 |
+|---|------|------|
+| 1 | localStorage 讀寫工具（getHistory、saveHistory、clearHistory） | `src/lib/history.ts`（新建） |
+| 2 | QuestionCard submit 成功後寫入歷史 | `src/components/question/QuestionCard.tsx` |
+| 3 | /history 列表頁（Client Component，含 skeleton + 空狀態） | `src/app/history/page.tsx`（新建） |
+
+### 注意事項（下次接手要知道）
+
+- localStorage key 是 `ho_history`，格式為 `HistoryEntry[]`（最新在前）
+- 同一 `question_id` 只存一筆（去重在 `saveHistory` 內處理）
+- history 頁用 `mounted` state 防止 SSR hydration mismatch（localStorage 只在 client 存在）
+- Navbar 的「歷史紀錄」連結早已存在，不需修改
+- 未實作：分享按鈕、AdSense、特質標籤（Day 6 B 計畫，之後補）
+
+### 驗證方式
+
+```bash
+cd c:/Users/ayaka/Downloads/human_obversation/human-observatory-web
+npm run dev
+# → 答一題送出 → 結果頁正常
+# → 點 Navbar「歷史紀錄」→ 看到剛才那筆紀錄
+# → 點紀錄 → 跳到結果頁
+# → 重新整理歷史頁，紀錄仍在
+```
