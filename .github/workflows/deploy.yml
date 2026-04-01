@@ -34,9 +34,7 @@ jobs:
 
       - name: Build
         working-directory: Downloads/human_obversation/human-observatory-web
-        env:
-          NEXT_TURBOPACK: '0'
-        run: npm run build
+        run: npx next build --webpack
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
