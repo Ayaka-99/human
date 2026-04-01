@@ -26,20 +26,20 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: human-observatory-web/package-lock.json
+          cache-dependency-path: Downloads/human_obversation/human-observatory-web/package-lock.json
 
       - name: Install dependencies
-        working-directory: human-observatory-web
+        working-directory: Downloads/human_obversation/human-observatory-web
         run: npm ci
 
       - name: Build
-        working-directory: human-observatory-web
+        working-directory: Downloads/human_obversation/human-observatory-web
         run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: human-observatory-web/out
+          path: Downloads/human_obversation/human-observatory-web/out
 
   deploy:
     environment:
