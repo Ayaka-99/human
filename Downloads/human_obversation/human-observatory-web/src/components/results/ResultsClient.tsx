@@ -184,25 +184,21 @@ export function ResultsClient({
             })}
           </div>
 
-          {/* WorldHeatmap — Premium Gate */}
+          {/* WorldHeatmap */}
           <div className="reveal-item" style={{ opacity: 0, marginTop: 32 }}>
-            <PremiumGate feature="世界地圖分佈">
-              <WorldHeatmap
-                regionBreakdown={stats?.region_breakdown ?? {}}
-                userAnswer={userAnswer}
-                options={options}
-              />
-            </PremiumGate>
+            <WorldHeatmap
+              regionBreakdown={stats?.region_breakdown ?? {}}
+              userAnswer={userAnswer}
+              options={options}
+            />
           </div>
 
-          {/* TimeHeatmap — Premium Gate */}
+          {/* TimeHeatmap */}
           <div className="reveal-item" style={{ opacity: 0, marginTop: 24 }}>
-            <PremiumGate feature="時段熱力圖">
-              <TimeHeatmap
-                timeBreakdown={stats?.time_breakdown ?? {}}
-                options={options}
-              />
-            </PremiumGate>
+            <TimeHeatmap
+              timeBreakdown={stats?.time_breakdown ?? {}}
+              options={options}
+            />
           </div>
         </div>
       </RevealAnimation>

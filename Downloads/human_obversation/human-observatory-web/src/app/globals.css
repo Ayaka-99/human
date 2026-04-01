@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* 深色（預設） */
+:root {
+  --bg:          #080C10;
+  --surface:     #10181F;
+  --surface-high:#18232D;
+  --border:      #1E2D3D;
+  --text:        #E8F0F8;
+  --text-muted:  #6B8599;
+  --teal:        #0D9BAA;
+  --teal-light:  #0D9BAA20;
+  --blue:        #1A4A7A;
+  --gold:        #E8A020;
+  --answer-a:    #3B82F6;
+  --answer-b:    #10B981;
+  --answer-c:    #F59E0B;
+  --answer-d:    #EF4444;
+  --answer-e:    #8B5CF6;
+  --radius:      12px;
+  --font-display:'Geist', sans-serif;
+  --font-mono:   'Geist Mono', monospace;
+}
+
+/* 白色模式覆蓋 — next-themes adds .light class to <html> */
+.light {
+  --bg:          #F0F4F8;
+  --surface:     #FFFFFF;
+  --surface-high:#E8EFF6;
+  --border:      #C8D8E8;
+  --text:        #0D1A26;
+  --text-muted:  #4A6680;
+  --teal:        #0D9BAA;
+  --teal-light:  #0D9BAA20;
+  --blue:        #1A4A7A;
+  --gold:        #C07010;
+  /* answer colors kept identical */
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+}
