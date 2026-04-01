@@ -1,0 +1,4 @@
+exclude:
+  - docs/superpowers
+  - human-observatory-web
+  - spec-web
