@@ -1,35 +1,43 @@
+'use client'
 // src/app/page.tsx
-// Server Component — 從 Supabase 取今日題目
-import { createServerClient } from '@/lib/supabase/server'
+// Client Component — 從 Supabase 取今日題目
+
+import { useEffect, useState } from 'react'
+import { createBrowserClient } from '@supabase/ssr'
 import { QuestionCard } from '@/components/question/QuestionCard'
 import { TODAY_QUESTION } from '@/lib/mockData'
 import type { Question } from '@/types'
 
-// 取得台北今日日期 YYYY-MM-DD
 function getTodayTaipei(): string {
   return new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' })
 }
 
-export default async function HomePage() {
-  const supabase = createServerClient()
-  const today = getTodayTaipei()
+export default function HomePage() {
+  const [question, setQuestion] = useState<Question>(TODAY_QUESTION)
 
-  const { data, error } = await supabase
-    .from('questions')
-    .select('*')
-    .eq('date', today)
-    .single()
-
-  // 若 Supabase 沒有今日題目，fallback 到假資料
-  const question: Question = (!error && data)
-    ? {
-        id: data.id,
-        date: data.date,
-        text_zh: data.text_zh,
-        type: data.type,
-        options: data.options,
-      }
-    : TODAY_QUESTION
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    const today = getTodayTaipei()
+    supabase
+      .from('questions')
+      .select('*')
+      .eq('date', today)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setQuestion({
+            id: data.id,
+            date: data.date,
+            text_zh: data.text_zh,
+            type: data.type,
+            options: data.options,
+          })
+        }
+      })
+  }, [])
 
   return (
     <main
