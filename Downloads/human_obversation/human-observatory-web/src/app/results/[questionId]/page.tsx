@@ -3,7 +3,8 @@
 
 import ResultsPageClient from './ResultsPageClient'
 
-// questionId 完全動態，回傳空陣列讓 Next.js 知道有此路由存在
+// questionId 完全動態，client-side fetch 處理
+export const dynamicParams = false
 export function generateStaticParams() {
   return []
 }
